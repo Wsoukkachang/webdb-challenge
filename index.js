@@ -19,7 +19,7 @@ server.get('/api/projects', async (req, res) => {
     const projects = await db('projects'); // all the projects from the table
     res.status(200).json(projects);
   } catch {
-    res.status(500).json({error: "Error retrieving data"})
+    res.status(500).json({error: "Error retrieving project data"})
   }
 })
 
@@ -31,7 +31,7 @@ server.post('/api/projects', async (req, res) => {
     const project = await db('projects').where({ id }).first();
     res.status(201).json(project);
   } catch {
-    res.status(500).json({error: "Error posting data"})
+    res.status(500).json({error: "Error posting project data"})
   }
 })
 
@@ -42,7 +42,7 @@ server.get('/api/actions', async (req, res) => {
     const actions = await db('actions'); // all the projects from the table
     res.status(200).json(actions);
   } catch {
-    res.status(500).json({error: "Error retrieving data"})
+    res.status(500).json({error: "Error retrieving action data"})
   }
 })
 
@@ -54,7 +54,26 @@ server.post('/api/actions', async (req, res) => {
     const action = await db('actions').where({ id }).first();
     res.status(201).json(action);
   } catch {
-    res.status(500).json({error: "Error posting data"})
+    res.status(500).json({error: "Error posting action data"})
+  }
+})
+
+//GET PROJECT AND ACTIONS BY ID
+
+server.get('/api/projects/:id', async (req, res) => {
+  try {
+    const project = await db('projects').where({ id: req.params.id })
+    .then(project => {
+      db('actions')
+      .where({ project_id: req.params.id })
+      .then(action => {
+        // console.log(action);
+        return res.status(200).json({project, actions: action});
+        })
+      });
+
+  } catch {
+  res.status(500).json({ error: "Error retrieving all data for that particular project" })
   }
 })
 
