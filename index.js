@@ -67,17 +67,26 @@ server.get('/api/projects/:id', async (req, res) => {
       db('actions')
       .where({ project_id: req.params.id })
       .then(action => {
-        // console.log(action);
-        return res.status(200).json({project, actions: action});
+        return res.status(201).json({project: [...project, {actions: action}]});
         })
       });
 
-  } catch {
-  res.status(500).json({ error: "Error retrieving all data for that particular project" })
-  }
-})
+      // SECOND WAY USING .PUSH()?
 
-const port = process.env.PORT ||  6000;
+      // const action = await db('actions').where({ project_id: req.params.id });
+      // const project = await db('projects').where({ id: req.params.id });
+
+      // const projectAction1 = res.status(201).json({project: [...project, {actions: action}]});
+      // const projectAction2 = project.push({actions: action}); //DOES NOT WORK - GIVES 2
+      
+      //   res.status(201).json(projectAction1);
+
+    } catch {
+      res.status(500).json({ error: "Error retrieving all data for that particular project" })
+    }
+  })
+
+const port = process.env.PORT ||  7000;
 server.listen(port, () =>
   console.log(`\n** API running on http://localhost:${port} **\n`)
 );
